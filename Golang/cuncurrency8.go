@@ -2,30 +2,45 @@
 // Learn how to use the select statement to handle multiple channels.
 
 // Task:
-
 package main
-
-import (
-    "fmt"
-)
-
+import "fmt"
 func main() {
-
-    c1 := make(chan string)
-    c2 := make(chan string)
-
+    channel1 := make(chan string)
+    channel2 := make(chan string)
+     
+    channel1Closed := false
+    channel2Closed := false
+     
     go func() {
-        c1 <- "one"
+    channel1 <- "sending message from channel 1\n"
+    close(channel1)
     }()
+     
     go func() {
-        c2 <- "two"
+    channel2 <- "sending message from channel 2\n"
+    close(channel2)
     }()
-
-            fmt.Println("received", msg1)
-
-            fmt.Println("received", msg2)
-        }
-    
+    for {
+    select {
+    case msg1, ok := <-channel1:
+    if !ok {
+    channel1Closed = true;
+    } else {
+    fmt.Println(msg1)
+    }
+    case msg2, ok := <-channel2:
+    if !ok {
+    channel2Closed = true;
+    } else {
+    fmt.Println(msg2)
+    }
+    }
+     
+    if channel1Closed && channel2Closed {
+    break;
+    }
+    }
+    }
 
 // Write a program that creates two channels and two goroutines. Each goroutine sends a different message to its respective channel.
 // Use a select statement in the main function to receive messages from both channels and print them.
